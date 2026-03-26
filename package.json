@@ -1,0 +1,17 @@
+{
+  "name": "raw-ais-ranking",
+  "version": "1.0.0",
+  "description": "Compute university rankings from OpenAlex journal data",
+  "main": "server.js",
+  "scripts": {
+    "fetch": "node scripts/fetch_papers.js",
+    "categorize": "node scripts/categorize_papers.js",
+    "rank": "node scripts/compute_rankings.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0"
+  }
+}

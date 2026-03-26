@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIS University Rankings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rutgers: '#CC0033',
+            'rutgers-dark': '#A30029',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    select { -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2.25rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-rutgers text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h1 class="text-2xl font-bold tracking-tight">AIS University Rankings</h1>
+      <p class="text-red-200 text-sm mt-1">US institution rankings based on publications in AIS-related journals</p>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-end gap-3 mb-8">
+      <div class="min-w-[160px]">
+        <label for="journal-filter" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Journal</label>
+        <select id="journal-filter" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-rutgers focus:border-transparent transition">
+          <option value="">All Journals</option>
+          <option value="AISEJ">AISEJ</option>
+          <option value="IJAIS">IJAIS</option>
+          <option value="IJDAR">IJDAR</option>
+          <option value="ISAFM">ISAFM</option>
+          <option value="JETA">JETA</option>
+          <option value="JIS">JIS</option>
+        </select>
+      </div>
+      <div class="min-w-[160px]">
+        <label for="year-filter" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Time Period</label>
+        <select id="year-filter" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-rutgers focus:border-transparent transition">
+          <option value="">All Time</option>
+          <option value="10">Last 10 Years</option>
+          <option value="20">Last 20 Years</option>
+          <option value="30">Last 30 Years</option>
+          <option value="40">Last 40 Years</option>
+          <option value="50">Last 50 Years</option>
+        </select>
+      </div>
+      <div id="active-filter-tag" class="hidden">
+        <span class="inline-flex items-center gap-1 bg-red-50 text-rutgers text-xs font-medium px-3 py-2.5 rounded-lg border border-red-100">
+          <span id="filter-label"></span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="flex items-center justify-center py-20 text-gray-400">
+      <svg class="animate-spin h-5 w-5 mr-3 text-rutgers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+      <span>Loading rankings...</span>
+    </div>
+
+    <!-- Dashboard content (hidden until loaded) -->
+    <div id="dashboard" class="hidden">
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 fade-in">
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Institutions Ranked</p>
+          <p id="stat-institutions" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Publications</p>
+          <p id="stat-publications" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Top Institution</p>
+          <p id="stat-top-inst" class="text-lg font-bold text-gray-800 mt-1 leading-snug truncate">--</p>
+          <p id="stat-top-count" class="text-xs text-gray-400 mt-0.5">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Avg. per Institution</p>
+          <p id="stat-avg" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+        </div>
+      </div>
+
+      <!-- Category Cards -->
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Category Breakdown</h2>
+      <div id="category-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 fade-in"></div>
+
+      <!-- Rankings Table -->
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden fade-in">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="text-base font-semibold text-gray-800">Top 50 US Institutions</h2>
+          <span id="table-count" class="text-xs text-gray-400"></span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-rutgers text-white text-xs uppercase tracking-wider">
+                <th class="px-5 py-3.5 text-left font-semibold w-12">#</th>
+                <th class="px-5 py-3.5 text-left font-semibold">Organization</th>
+                <th class="px-5 py-3.5 text-left font-semibold w-20">Country</th>
+                <th class="px-5 py-3.5 text-right font-semibold w-20">Total</th>
+                <th class="px-5 py-3.5 text-right font-semibold">Acct &amp; Fin AI</th>
+                <th class="px-5 py-3.5 text-right font-semibold">BI &amp; Decision</th>
+                <th class="px-5 py-3.5 text-right font-semibold">IS &amp; Analytics</th>
+                <th class="px-5 py-3.5 text-right font-semibold">Eng &amp; Indust.</th>
+                <th class="px-5 py-3.5 text-right font-semibold">Core AI &amp; DS</th>
+              </tr>
+            </thead>
+            <tbody id="rankings-body" class="divide-y divide-gray-50"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /dashboard -->
+
+    <!-- Empty state -->
+    <div id="empty-state" class="hidden text-center py-20">
+      <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <p class="mt-3 text-sm text-gray-400">No results for this filter combination.</p>
+    </div>
+
+  </main>
+
+  <footer class="border-t border-gray-100 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-400">
+      Data sourced from <a href="https://openalex.org" target="_blank" class="underline hover:text-gray-600">OpenAlex</a>. Categories assigned via OpenAI.
+    </div>
+  </footer>
+
+  <script>
+    const CAT_KEYS = [
+      'Accounting & Financial AI',
+      'Business Intelligence & Decision Support',
+      'Information Systems & Applied Analytics',
+      'Engineering & Industrial AI',
+      'Core AI & Data Science Methods',
+    ];
+
+    const CAT_SHORT = ['Acct & Fin AI', 'BI & Decision', 'IS & Analytics', 'Eng & Indust.', 'Core AI & DS'];
+    const CAT_ICONS = [
+      '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+      '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>',
+      '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg>',
+      '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.42 15.17l-5.1-5.1m0 0L11.42 4.97m-5.1 5.1H21M3 21h18"/></svg>',
+      '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/></svg>',
+    ];
+
+    const journalSelect = document.getElementById('journal-filter');
+    const yearSelect = document.getElementById('year-filter');
+
+    function num(n) { return n.toLocaleString(); }
+
+    function updateFilterTag() {
+      const parts = [];
+      if (journalSelect.value) parts.push(journalSelect.value);
+      if (yearSelect.value) parts.push('Last ' + yearSelect.value + 'y');
+      const tag = document.getElementById('active-filter-tag');
+      if (parts.length) {
+        document.getElementById('filter-label').textContent = parts.join(' / ');
+        tag.classList.remove('hidden');
+      } else {
+        tag.classList.add('hidden');
+      }
+    }
+
+    function renderSummaryCards(data) {
+      const totalPubs = data.reduce((s, r) => s + r.total, 0);
+      document.getElementById('stat-institutions').textContent = num(data.length);
+      document.getElementById('stat-publications').textContent = num(totalPubs);
+      if (data.length) {
+        document.getElementById('stat-top-inst').textContent = data[0].institution;
+        document.getElementById('stat-top-inst').title = data[0].institution;
+        document.getElementById('stat-top-count').textContent = num(data[0].total) + ' publications';
+        document.getElementById('stat-avg').textContent = (totalPubs / data.length).toFixed(1);
+      }
+    }
+
+    function renderCategoryCards(data) {
+      const container = document.getElementById('category-cards');
+      container.innerHTML = '';
+      CAT_KEYS.forEach((key, i) => {
+        const catTotal = data.reduce((s, r) => s + (r.categories[key] || 0), 0);
+        let topInst = '--';
+        let topVal = 0;
+        for (const r of data) {
+          const v = r.categories[key] || 0;
+          if (v > topVal) { topVal = v; topInst = r.institution; }
+        }
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-col justify-between';
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-rutgers">${CAT_ICONS[i]}</span>
+              <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide leading-tight">${CAT_SHORT[i]}</span>
+            </div>
+            <p class="text-2xl font-extrabold text-gray-800">${num(catTotal)}</p>
+            <p class="text-xs text-gray-400 mt-0.5">publications</p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-gray-50">
+            <p class="text-[11px] text-gray-400 uppercase tracking-wide">Top Institution</p>
+            <p class="text-xs font-medium text-gray-600 truncate mt-0.5" title="${topInst}">${topVal > 0 ? topInst : '--'}</p>
+            ${topVal > 0 ? `<p class="text-[11px] text-gray-400">${num(topVal)} papers</p>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('rankings-body');
+      tbody.innerHTML = '';
+      const maxTotal = data.length ? data[0].total : 1;
+
+      for (const row of data) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50/80 transition-colors';
+
+        const barWidth = Math.round((row.total / maxTotal) * 100);
+
+        tr.innerHTML = `
+          <td class="px-5 py-3.5 font-semibold text-gray-400 text-center w-12">${row.rank}</td>
+          <td class="px-5 py-3.5">
+            <div class="font-medium text-gray-800 leading-tight">${row.institution}</div>
+            <div class="mt-1.5 h-1 rounded-full bg-gray-100 overflow-hidden" style="max-width:180px">
+              <div class="h-full rounded-full bg-rutgers/70" style="width:${barWidth}%"></div>
+            </div>
+          </td>
+          <td class="px-5 py-3.5 text-gray-400 text-xs font-medium">${row.country}</td>
+          <td class="px-5 py-3.5 text-right">
+            <span class="inline-flex items-center justify-center bg-red-50 text-rutgers font-bold text-xs rounded-full px-2.5 py-1 min-w-[40px]">${num(row.total)}</span>
+          </td>
+          ${CAT_KEYS.map(k => {
+            const v = row.categories[k] || 0;
+            return `<td class="px-5 py-3.5 text-right tabular-nums ${v > 0 ? 'text-gray-700 font-medium' : 'text-gray-300'}">${v > 0 ? num(v) : '-'}</td>`;
+          }).join('')}
+        `;
+        tbody.appendChild(tr);
+      }
+
+      document.getElementById('table-count').textContent = data.length + ' institutions';
+    }
+
+    async function loadRankings() {
+      const params = new URLSearchParams();
+      if (journalSelect.value) params.set('journal', journalSelect.value);
+      if (yearSelect.value) params.set('years', yearSelect.value);
+
+      updateFilterTag();
+
+      const loading = document.getElementById('loading');
+      const dashboard = document.getElementById('dashboard');
+      const emptyState = document.getElementById('empty-state');
+
+      loading.classList.remove('hidden');
+      dashboard.classList.add('hidden');
+      emptyState.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/rankings?' + params.toString());
+        const data = await res.json();
+
+        loading.classList.add('hidden');
+
+        if (!data.length) {
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        renderSummaryCards(data);
+        renderCategoryCards(data);
+        renderTable(data);
+        dashboard.classList.remove('hidden');
+      } catch (err) {
+        loading.innerHTML = `<span class="text-red-400">Error loading rankings: ${err.message}</span>`;
+      }
+    }
+
+    journalSelect.addEventListener('change', loadRankings);
+    yearSelect.addEventListener('change', loadRankings);
+
+    loadRankings();
+  </script>
+
+</body>
+</html>
