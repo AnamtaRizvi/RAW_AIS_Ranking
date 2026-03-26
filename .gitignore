@@ -1,3 +1,6 @@
 node_modules/
 .env
-data/*.json
+data/papers.json
+data/categorized.json
+data/authors_papers.json
+data/authors_phd.json

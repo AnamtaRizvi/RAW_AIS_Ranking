@@ -61,11 +61,15 @@ function computeRankings(journal, years) {
     }
   }
 
-  return Object.entries(counts)
-    .sort((a, b) => b[1].total - a[1].total)
-    .slice(0, 50)
-    .map(([instId, entry], i) => ({
-      rank: i + 1,
+  const sorted = Object.entries(counts)
+    .sort((a, b) => b[1].total - a[1].total || a[1].displayName.localeCompare(b[1].displayName))
+    .slice(0, 50);
+
+  let rank = 1;
+  return sorted.map(([instId, entry], i) => {
+    if (i > 0 && entry.total < sorted[i - 1][1].total) rank = i + 1;
+    return {
+      rank,
       institutionId: instId,
       institution: entry.displayName,
       country: entry.countryCode,
@@ -77,7 +81,8 @@ function computeRankings(journal, years) {
         [CATEGORY_NAMES[4]]: entry.categories[4],
         [CATEGORY_NAMES[5]]: entry.categories[5],
       },
-    }));
+    };
+  });
 }
 
 app.use(express.static(path.join(__dirname, 'public')));

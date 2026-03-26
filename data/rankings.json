@@ -1,0 +1,702 @@
+[
+  {
+    "rank": 1,
+    "institutionId": "https://openalex.org/I102322142",
+    "institution": "Rutgers, The State University of New Jersey",
+    "country": "US",
+    "total": 177,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 2,
+    "institutionId": "https://openalex.org/I1174212",
+    "institution": "University of Southern California",
+    "country": "US",
+    "total": 83,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 3,
+    "institutionId": "https://openalex.org/I139924743",
+    "institution": "Bentley University",
+    "country": "US",
+    "total": 68,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 4,
+    "institutionId": "https://openalex.org/I2613432",
+    "institution": "University of South Florida",
+    "country": "US",
+    "total": 54,
+    "categories": {
+      "Accounting & Financial AI": 1,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 5,
+    "institutionId": "https://openalex.org/I106165777",
+    "institution": "University of Central Florida",
+    "country": "US",
+    "total": 54,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 6,
+    "institutionId": "https://openalex.org/I173911158",
+    "institution": "Iowa State University",
+    "country": "US",
+    "total": 40,
+    "categories": {
+      "Accounting & Financial AI": 1,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 7,
+    "institutionId": "https://openalex.org/I55732556",
+    "institution": "Arizona State University",
+    "country": "US",
+    "total": 37,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 8,
+    "institutionId": "https://openalex.org/I146416000",
+    "institution": "University of Kansas",
+    "country": "US",
+    "total": 33,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 9,
+    "institutionId": "https://openalex.org/I118353179",
+    "institution": "DePaul University",
+    "country": "US",
+    "total": 33,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 10,
+    "institutionId": "https://openalex.org/I2800817003",
+    "institution": "Southern California University for Professional Studies",
+    "country": "US",
+    "total": 33,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 11,
+    "institutionId": "https://openalex.org/I123534392",
+    "institution": "University of North Texas",
+    "country": "US",
+    "total": 32,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 12,
+    "institutionId": "https://openalex.org/I117965899",
+    "institution": "University of Hawaiʻi at Mānoa",
+    "country": "US",
+    "total": 32,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 13,
+    "institutionId": "https://openalex.org/I63772739",
+    "institution": "Florida Atlantic University",
+    "country": "US",
+    "total": 30,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 14,
+    "institutionId": "https://openalex.org/I12315562",
+    "institution": "Texas Tech University",
+    "country": "US",
+    "total": 28,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 15,
+    "institutionId": "https://openalex.org/I100005738",
+    "institution": "Brigham Young University",
+    "country": "US",
+    "total": 28,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 16,
+    "institutionId": "https://openalex.org/I99041443",
+    "institution": "Mississippi State University",
+    "country": "US",
+    "total": 27,
+    "categories": {
+      "Accounting & Financial AI": 1,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 17,
+    "institutionId": "https://openalex.org/I87216513",
+    "institution": "Michigan State University",
+    "country": "US",
+    "total": 27,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 18,
+    "institutionId": "https://openalex.org/I86501945",
+    "institution": "University of Delaware",
+    "country": "US",
+    "total": 26,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 19,
+    "institutionId": "https://openalex.org/I137902535",
+    "institution": "North Carolina State University",
+    "country": "US",
+    "total": 26,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 20,
+    "institutionId": "https://openalex.org/I103163165",
+    "institution": "Florida State University",
+    "country": "US",
+    "total": 24,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 21,
+    "institutionId": "https://openalex.org/I392282",
+    "institution": "University at Albany, State University of New York",
+    "country": "US",
+    "total": 24,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 22,
+    "institutionId": "https://openalex.org/I143302722",
+    "institution": "University of Kentucky",
+    "country": "US",
+    "total": 23,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 23,
+    "institutionId": "https://openalex.org/I133999245",
+    "institution": "University of Nevada, Las Vegas",
+    "country": "US",
+    "total": 23,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 24,
+    "institutionId": "https://openalex.org/I181565077",
+    "institution": "Georgia State University",
+    "country": "US",
+    "total": 23,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 25,
+    "institutionId": "https://openalex.org/I52913039",
+    "institution": "University of Houston - Clear Lake",
+    "country": "US",
+    "total": 22,
+    "categories": {
+      "Accounting & Financial AI": 1,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 26,
+    "institutionId": "https://openalex.org/I184840846",
+    "institution": "Virginia Commonwealth University",
+    "country": "US",
+    "total": 22,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 27,
+    "institutionId": "https://openalex.org/I78715868",
+    "institution": "University of Arkansas at Fayetteville",
+    "country": "US",
+    "total": 22,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 28,
+    "institutionId": "https://openalex.org/I157417397",
+    "institution": "Bowling Green State University",
+    "country": "US",
+    "total": 21,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 29,
+    "institutionId": "https://openalex.org/I153901656",
+    "institution": "University of North Carolina Wilmington",
+    "country": "US",
+    "total": 20,
+    "categories": {
+      "Accounting & Financial AI": 3,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 1,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 30,
+    "institutionId": "https://openalex.org/I76835614",
+    "institution": "University of Missouri",
+    "country": "US",
+    "total": 20,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 31,
+    "institutionId": "https://openalex.org/I157638225",
+    "institution": "California State University, Northridge",
+    "country": "US",
+    "total": 19,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 32,
+    "institutionId": "https://openalex.org/I859038795",
+    "institution": "Virginia Tech",
+    "country": "US",
+    "total": 19,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 33,
+    "institutionId": "https://openalex.org/I82497590",
+    "institution": "Auburn University",
+    "country": "US",
+    "total": 19,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 34,
+    "institutionId": "https://openalex.org/I121820613",
+    "institution": "Louisiana State University",
+    "country": "US",
+    "total": 19,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 35,
+    "institutionId": "https://openalex.org/I94658018",
+    "institution": "University of Memphis",
+    "country": "US",
+    "total": 18,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 36,
+    "institutionId": "https://openalex.org/I12097938",
+    "institution": "West Virginia University",
+    "country": "US",
+    "total": 18,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 37,
+    "institutionId": "https://openalex.org/I91045830",
+    "institution": "Texas A&M University",
+    "country": "US",
+    "total": 18,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 38,
+    "institutionId": "https://openalex.org/I186143895",
+    "institution": "Lehigh University",
+    "country": "US",
+    "total": 18,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 39,
+    "institutionId": "https://openalex.org/I11883440",
+    "institution": "James Madison University",
+    "country": "US",
+    "total": 17,
+    "categories": {
+      "Accounting & Financial AI": 2,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 40,
+    "institutionId": "https://openalex.org/I83328450",
+    "institution": "Miami University",
+    "country": "US",
+    "total": 17,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 41,
+    "institutionId": "https://openalex.org/I166088655",
+    "institution": "Montclair State University",
+    "country": "US",
+    "total": 17,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 42,
+    "institutionId": "https://openalex.org/I131249849",
+    "institution": "Oregon State University",
+    "country": "US",
+    "total": 17,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 43,
+    "institutionId": "https://openalex.org/I119942284",
+    "institution": "Missouri State University",
+    "country": "US",
+    "total": 16,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 44,
+    "institutionId": "https://openalex.org/I110152177",
+    "institution": "University of Akron",
+    "country": "US",
+    "total": 16,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 45,
+    "institutionId": "https://openalex.org/I59897056",
+    "institution": "California State University, Long Beach",
+    "country": "US",
+    "total": 16,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 46,
+    "institutionId": "https://openalex.org/I64281891",
+    "institution": "College of New Jersey",
+    "country": "US",
+    "total": 16,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 47,
+    "institutionId": "https://openalex.org/I155781252",
+    "institution": "University of South Carolina",
+    "country": "US",
+    "total": 14,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 48,
+    "institutionId": "https://openalex.org/I142934699",
+    "institution": "California State University, Fullerton",
+    "country": "US",
+    "total": 14,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 49,
+    "institutionId": "https://openalex.org/I920285187",
+    "institution": "Siena College",
+    "country": "US",
+    "total": 13,
+    "categories": {
+      "Accounting & Financial AI": 1,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  },
+  {
+    "rank": 50,
+    "institutionId": "https://openalex.org/I113508548",
+    "institution": "Albany State University",
+    "country": "US",
+    "total": 13,
+    "categories": {
+      "Accounting & Financial AI": 0,
+      "Business Intelligence & Decision Support": 0,
+      "Information Systems & Applied Analytics": 0,
+      "Engineering & Industrial AI": 0,
+      "Core AI & Data Science Methods": 0
+    }
+  }
+]
