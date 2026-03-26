@@ -174,8 +174,6 @@
     const yearSelect = document.getElementById('year-filter');
     const searchInput = document.getElementById('search-input');
 
-    let lastFetchedData = [];
-
     function num(n) { return n.toLocaleString(); }
 
     function updateFilterTag() {
@@ -289,40 +287,41 @@
       dashboard.classList.remove('hidden');
     }
 
-    function getFilteredData() {
+    let allRankings = null;
+
+    function applyFilters() {
+      if (!allRankings) return;
+
+      const journal = journalSelect.value || 'all';
+      const year = yearSelect.value || 'all';
+      const key = journal + '_' + year;
+      let data = allRankings[key] || [];
+
       const query = searchInput.value.trim().toLowerCase();
-      if (!query) return lastFetchedData;
-      return lastFetchedData.filter(r => r.institution.toLowerCase().includes(query));
+      if (query) {
+        data = data.filter(r => r.institution.toLowerCase().includes(query));
+      }
+
+      displayData(data);
     }
 
-    async function loadRankings() {
-      const params = new URLSearchParams();
-      if (journalSelect.value) params.set('journal', journalSelect.value);
-      if (yearSelect.value) params.set('years', yearSelect.value);
-
-      const loading = document.getElementById('loading');
-      const dashboard = document.getElementById('dashboard');
-      const emptyState = document.getElementById('empty-state');
-
-      loading.classList.remove('hidden');
-      dashboard.classList.add('hidden');
-      emptyState.classList.add('hidden');
-
+    async function init() {
       try {
-        const res = await fetch('/api/rankings?' + params.toString());
-        lastFetchedData = await res.json();
-        loading.classList.add('hidden');
-        displayData(getFilteredData());
+        const res = await fetch('./data/rankings.json');
+        allRankings = await res.json();
+        document.getElementById('loading').classList.add('hidden');
+        applyFilters();
       } catch (err) {
-        loading.innerHTML = `<span class="text-red-400">Error loading rankings: ${err.message}</span>`;
+        document.getElementById('loading').innerHTML =
+          `<span class="text-red-400">Error loading rankings: ${err.message}</span>`;
       }
     }
 
-    journalSelect.addEventListener('change', loadRankings);
-    yearSelect.addEventListener('change', loadRankings);
-    searchInput.addEventListener('input', () => displayData(getFilteredData()));
+    journalSelect.addEventListener('change', applyFilters);
+    yearSelect.addEventListener('change', applyFilters);
+    searchInput.addEventListener('input', applyFilters);
 
-    loadRankings();
+    init();
   </script>
 
 </body>
