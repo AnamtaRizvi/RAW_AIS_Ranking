@@ -88,6 +88,92 @@ app.get('/api/rankings', (req, res) => {
   res.json(computeRankings(journal, years));
 });
 
+// --- Author rankings (separate feature) ---
+
+const authorsPapers = loadJSON(path.join(__dirname, 'data', 'authors_papers.json')) || [];
+const authorsPhd = loadJSON(path.join(__dirname, 'data', 'authors_phd.json')) || {};
+
+console.log(`Loaded ${authorsPapers.length} author-paper records, ${Object.keys(authorsPhd).length} PhD lookups`);
+
+function computeAuthorRankings(journal, years) {
+  const currentYear = new Date().getFullYear();
+  const minYear = years ? currentYear - years : 0;
+
+  const filtered = authorsPapers.filter(p => {
+    if (journal && p.journal !== journal) return false;
+    if (p.publicationYear < minYear) return false;
+    return true;
+  });
+
+  const authorCounts = {};
+
+  for (const paper of filtered) {
+    const seen = new Set();
+    for (const a of paper.authors) {
+      if (seen.has(a.authorId)) continue;
+      seen.add(a.authorId);
+
+      if (!authorCounts[a.authorId]) {
+        const phd = authorsPhd[a.authorId] || {};
+        authorCounts[a.authorId] = {
+          authorName: a.authorName,
+          orcid: a.orcid,
+          phdInstitution: phd.institution || phd.phdInstitution || null,
+          phdSource: phd.source || null,
+          phdConfidence: phd.confidence || null,
+          paperCount: 0,
+          journals: new Set(),
+        };
+      }
+      authorCounts[a.authorId].paperCount += 1;
+      authorCounts[a.authorId].journals.add(paper.journal);
+    }
+  }
+
+  const allAuthors = Object.entries(authorCounts);
+  const totalAuthors = allAuthors.length;
+  const authorsWithPhd = allAuthors.filter(([, a]) => a.phdInstitution).length;
+
+  const topAuthors = allAuthors
+    .sort((a, b) => b[1].paperCount - a[1].paperCount)
+    .slice(0, 100)
+    .map(([id, a], i) => ({
+      rank: i + 1,
+      authorId: id,
+      authorName: a.authorName,
+      paperCount: a.paperCount,
+      phdInstitution: a.phdInstitution,
+      orcid: a.orcid,
+      journals: [...a.journals].sort(),
+    }));
+
+  const phdCounts = {};
+  for (const a of topAuthors) {
+    if (!a.phdInstitution) continue;
+    phdCounts[a.phdInstitution] = (phdCounts[a.phdInstitution] || 0) + 1;
+  }
+  const topPhdInstitutions = Object.entries(phdCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 20)
+    .map(([inst, count]) => ({ institution: inst, count }));
+
+  return {
+    summary: {
+      totalAuthors,
+      authorsWithPhdData: authorsWithPhd,
+      totalPapersConsidered: filtered.length,
+    },
+    topAuthors,
+    topPhdInstitutions,
+  };
+}
+
+app.get('/api/authors', (req, res) => {
+  const journal = req.query.journal || null;
+  const years = req.query.years ? parseInt(req.query.years, 10) : null;
+  res.json(computeAuthorRankings(journal, years));
+});
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

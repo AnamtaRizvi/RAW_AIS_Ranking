@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIS Author Rankings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rutgers: '#CC0033',
+            'rutgers-dark': '#A30029',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    select { -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2.25rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-rutgers text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">AIS Author Rankings</h1>
+          <p class="text-red-200 text-sm mt-1">Author rankings by publication count with PhD institution data</p>
+        </div>
+        <nav class="flex gap-3 text-sm">
+          <a href="/" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">Institutions</a>
+          <a href="/authors.html" class="px-3 py-1.5 rounded-lg bg-white/20 font-semibold">Authors</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-end gap-3 mb-8">
+      <div class="min-w-[160px]">
+        <label for="journal-filter" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Journal</label>
+        <select id="journal-filter" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-rutgers focus:border-transparent transition">
+          <option value="">All Journals</option>
+          <option value="AISEJ">AISEJ</option>
+          <option value="IJAIS">IJAIS</option>
+          <option value="IJDAR">IJDAR</option>
+          <option value="ISAFM">ISAFM</option>
+          <option value="JETA">JETA</option>
+          <option value="JIS">JIS</option>
+        </select>
+      </div>
+      <div class="min-w-[160px]">
+        <label for="year-filter" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Time Period</label>
+        <select id="year-filter" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-rutgers focus:border-transparent transition">
+          <option value="">All Time</option>
+          <option value="10">Last 10 Years</option>
+          <option value="20">Last 20 Years</option>
+          <option value="30">Last 30 Years</option>
+          <option value="40">Last 40 Years</option>
+          <option value="50">Last 50 Years</option>
+        </select>
+      </div>
+      <div id="active-filter-tag" class="hidden">
+        <span class="inline-flex items-center gap-1 bg-red-50 text-rutgers text-xs font-medium px-3 py-2.5 rounded-lg border border-red-100">
+          <span id="filter-label"></span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="flex items-center justify-center py-20 text-gray-400">
+      <svg class="animate-spin h-5 w-5 mr-3 text-rutgers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+      <span>Loading author rankings...</span>
+    </div>
+
+    <!-- Dashboard (hidden until loaded) -->
+    <div id="dashboard" class="hidden">
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 fade-in">
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Authors</p>
+          <p id="stat-total-authors" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Papers Considered</p>
+          <p id="stat-total-papers" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Top Author</p>
+          <p id="stat-top-author" class="text-lg font-bold text-gray-800 mt-1 leading-snug truncate">--</p>
+          <p id="stat-top-author-count" class="text-xs text-gray-400 mt-0.5">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Authors with PhD Data</p>
+          <p id="stat-phd-count" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+          <p id="stat-phd-pct" class="text-xs text-gray-400 mt-0.5">--</p>
+        </div>
+      </div>
+
+      <!-- Two-column layout: Authors table + PhD sidebar -->
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 fade-in">
+
+        <!-- Authors Table (2/3) -->
+        <div class="xl:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+            <h2 class="text-base font-semibold text-gray-800">Top 100 Authors</h2>
+            <span id="table-count" class="text-xs text-gray-400"></span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-rutgers text-white text-xs uppercase tracking-wider">
+                  <th class="px-4 py-3.5 text-left font-semibold w-12">#</th>
+                  <th class="px-4 py-3.5 text-left font-semibold">Author</th>
+                  <th class="px-4 py-3.5 text-left font-semibold">PhD Institution</th>
+                  <th class="px-4 py-3.5 text-right font-semibold w-20">Papers</th>
+                  <th class="px-4 py-3.5 text-left font-semibold">Journals</th>
+                </tr>
+              </thead>
+              <tbody id="authors-body" class="divide-y divide-gray-50"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PhD Institution Sidebar (1/3) -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-100">
+            <h2 class="text-base font-semibold text-gray-800">Top PhD Institutions</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Among top-100 ranked authors</p>
+          </div>
+          <div id="phd-list" class="divide-y divide-gray-50"></div>
+          <div id="phd-empty" class="hidden px-5 py-10 text-center text-sm text-gray-400">
+            No PhD data available yet.<br>Run the enrichment script first.
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /dashboard -->
+
+    <!-- Empty state -->
+    <div id="empty-state" class="hidden text-center py-20">
+      <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <p class="mt-3 text-sm text-gray-400">No author data available. Run <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">npm run fetch-authors</code> first.</p>
+    </div>
+
+  </main>
+
+  <footer class="border-t border-gray-100 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-400">
+      Data sourced from <a href="https://openalex.org" target="_blank" class="underline hover:text-gray-600">OpenAlex</a>. PhD data from <a href="https://orcid.org" target="_blank" class="underline hover:text-gray-600">ORCID</a>.
+    </div>
+  </footer>
+
+  <script>
+    const journalSelect = document.getElementById('journal-filter');
+    const yearSelect = document.getElementById('year-filter');
+
+    function num(n) { return n.toLocaleString(); }
+
+    const JOURNAL_COLORS = {
+      AISEJ: 'bg-blue-100 text-blue-700',
+      IJAIS: 'bg-emerald-100 text-emerald-700',
+      IJDAR: 'bg-violet-100 text-violet-700',
+      ISAFM: 'bg-amber-100 text-amber-700',
+      JETA:  'bg-pink-100 text-pink-700',
+      JIS:   'bg-cyan-100 text-cyan-700',
+    };
+
+    function updateFilterTag() {
+      const parts = [];
+      if (journalSelect.value) parts.push(journalSelect.value);
+      if (yearSelect.value) parts.push('Last ' + yearSelect.value + 'y');
+      const tag = document.getElementById('active-filter-tag');
+      if (parts.length) {
+        document.getElementById('filter-label').textContent = parts.join(' / ');
+        tag.classList.remove('hidden');
+      } else {
+        tag.classList.add('hidden');
+      }
+    }
+
+    function renderSummary(data) {
+      const s = data.summary;
+      document.getElementById('stat-total-authors').textContent = num(s.totalAuthors);
+      document.getElementById('stat-total-papers').textContent = num(s.totalPapersConsidered);
+
+      if (data.topAuthors.length) {
+        const top = data.topAuthors[0];
+        document.getElementById('stat-top-author').textContent = top.authorName;
+        document.getElementById('stat-top-author').title = top.authorName;
+        document.getElementById('stat-top-author-count').textContent = num(top.paperCount) + ' papers';
+      }
+
+      document.getElementById('stat-phd-count').textContent = num(s.authorsWithPhdData);
+      if (s.totalAuthors > 0) {
+        const pct = ((s.authorsWithPhdData / s.totalAuthors) * 100).toFixed(1);
+        document.getElementById('stat-phd-pct').textContent = pct + '% of all authors';
+      }
+    }
+
+    function renderAuthorsTable(authors) {
+      const tbody = document.getElementById('authors-body');
+      tbody.innerHTML = '';
+      const maxPapers = authors.length ? authors[0].paperCount : 1;
+
+      for (const a of authors) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50/80 transition-colors';
+
+        const barWidth = Math.round((a.paperCount / maxPapers) * 100);
+        const phdText = a.phdInstitution || '<span class="text-gray-300 italic">Not available</span>';
+        const journalTags = a.journals.map(j => {
+          const cls = JOURNAL_COLORS[j] || 'bg-gray-100 text-gray-600';
+          return `<span class="inline-block text-[10px] font-semibold px-1.5 py-0.5 rounded ${cls}">${j}</span>`;
+        }).join(' ');
+
+        const orcidLink = a.orcid
+          ? `<a href="${a.orcid}" target="_blank" class="text-green-600 hover:text-green-800 ml-1" title="ORCID profile"><svg class="w-3.5 h-3.5 inline" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 01-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-1.847-1.238-3.722-3.853-3.722h-2.466z"/></svg></a>`
+          : '';
+
+        tr.innerHTML = `
+          <td class="px-4 py-3.5 font-semibold text-gray-400 text-center w-12">${a.rank}</td>
+          <td class="px-4 py-3.5">
+            <div class="font-medium text-gray-800 leading-tight">${a.authorName}${orcidLink}</div>
+            <div class="mt-1.5 h-1 rounded-full bg-gray-100 overflow-hidden" style="max-width:140px">
+              <div class="h-full rounded-full bg-rutgers/70" style="width:${barWidth}%"></div>
+            </div>
+          </td>
+          <td class="px-4 py-3.5 text-sm text-gray-600">${phdText}</td>
+          <td class="px-4 py-3.5 text-right">
+            <span class="inline-flex items-center justify-center bg-red-50 text-rutgers font-bold text-xs rounded-full px-2.5 py-1 min-w-[36px]">${num(a.paperCount)}</span>
+          </td>
+          <td class="px-4 py-3.5"><div class="flex flex-wrap gap-1">${journalTags}</div></td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      document.getElementById('table-count').textContent = authors.length + ' authors';
+    }
+
+    function renderPhdSidebar(phdInstitutions) {
+      const list = document.getElementById('phd-list');
+      const empty = document.getElementById('phd-empty');
+      list.innerHTML = '';
+
+      if (!phdInstitutions.length) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+
+      const maxCount = phdInstitutions[0].count;
+      for (const item of phdInstitutions) {
+        const barWidth = Math.round((item.count / maxCount) * 100);
+        const row = document.createElement('div');
+        row.className = 'px-5 py-3.5 hover:bg-gray-50/80 transition-colors';
+        row.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-sm font-medium text-gray-800 truncate mr-2" title="${item.institution}">${item.institution}</span>
+            <span class="text-xs font-bold text-rutgers whitespace-nowrap">${num(item.count)}</span>
+          </div>
+          <div class="h-1 rounded-full bg-gray-100 overflow-hidden">
+            <div class="h-full rounded-full bg-rutgers/50" style="width:${barWidth}%"></div>
+          </div>
+        `;
+        list.appendChild(row);
+      }
+    }
+
+    async function loadAuthors() {
+      const params = new URLSearchParams();
+      if (journalSelect.value) params.set('journal', journalSelect.value);
+      if (yearSelect.value) params.set('years', yearSelect.value);
+
+      updateFilterTag();
+
+      const loading = document.getElementById('loading');
+      const dashboard = document.getElementById('dashboard');
+      const emptyState = document.getElementById('empty-state');
+
+      loading.classList.remove('hidden');
+      dashboard.classList.add('hidden');
+      emptyState.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/authors?' + params.toString());
+        const data = await res.json();
+
+        loading.classList.add('hidden');
+
+        if (!data.topAuthors || !data.topAuthors.length) {
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        renderSummary(data);
+        renderAuthorsTable(data.topAuthors);
+        renderPhdSidebar(data.topPhdInstitutions || []);
+        dashboard.classList.remove('hidden');
+      } catch (err) {
+        loading.innerHTML = `<span class="text-red-400">Error loading author data: ${err.message}</span>`;
+      }
+    }
+
+    journalSelect.addEventListener('change', loadAuthors);
+    yearSelect.addEventListener('change', loadAuthors);
+
+    loadAuthors();
+  </script>
+
+</body>
+</html>

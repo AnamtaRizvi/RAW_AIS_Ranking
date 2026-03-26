@@ -7,6 +7,8 @@
     "fetch": "node scripts/fetch_papers.js",
     "categorize": "node scripts/categorize_papers.js",
     "rank": "node scripts/compute_rankings.js",
+    "fetch-authors": "node scripts/fetch_authors.js",
+    "enrich-phd": "node scripts/enrich_authors_phd.js",
     "start": "node server.js"
   },
   "dependencies": {
