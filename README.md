@@ -8,7 +8,7 @@ Ranks US universities by publication count across six AIS-related journals, usin
 |---|---|
 | AISEJ | AIS Educator Journal |
 | IJAIS | International Journal of Accounting Information Systems |
-| IJDAR | International Journal on Document Analysis and Recognition |
+| IJDAR | International Journal of Digital Accounting Research |
 | ISAFM | Intelligent Systems in Accounting, Finance and Management |
 | JETA | Journal of Emerging Technologies in Accounting |
 | JIS | Journal of Information Systems |
@@ -32,7 +32,7 @@ server.js                     # Express server with dynamic ranking API
 scripts/
   fetch_papers.js             # Step 1: Fetch papers from OpenAlex
   compute_rankings.js         # Step 2: Compute top 50 US institution rankings
-  categorize_papers.js        # Step 3: Classify papers via OpenAI (top 50 only)
+  categorize_papers.js        # Step 3: Classify papers (top-50 insts + top-50 authors, per scope)
 data/                         # Generated at runtime
   papers.json                 # All fetched papers
   rankings.json               # Static top-50 ranking snapshot
@@ -85,7 +85,7 @@ Counts unique US institutions per paper (+1 per paper regardless of how many co-
 npm run categorize
 ```
 
-Sends each uncategorized paper's title and abstract to `gpt-4o-mini` for classification. Only categorizes papers belonging to top-50 institutions (reads `rankings.json` to determine which). Saves progress incrementally to `data/categorized.json` every 10 papers, so it can be safely interrupted and resumed.
+Sends each not-yet-labeled paper in scope to `gpt-4o-mini`. **Scope** is the union of: (1) every paper with a US affiliation at an institution in the **global** top 50 or that **journal’s** top 50 (by publication count), and (2) every paper that lists an author in the **global** top 50 or that **journal’s** top 50 (by count in `authors_papers.json`). Run `npm run fetch-authors` first so author coverage applies. Saves incrementally to `data/categorized.json` every 10 papers.
 
 ### Step 4 -- Recompute rankings with categories
 

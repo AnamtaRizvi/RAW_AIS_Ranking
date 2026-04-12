@@ -28,8 +28,16 @@
 
   <header class="bg-rutgers text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <h1 class="text-2xl font-bold tracking-tight">AIS University Rankings</h1>
-      <p class="text-red-200 text-sm mt-1">US institution rankings based on publications in AIS-related journals</p>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">AIS University Rankings</h1>
+          <p class="text-red-200 text-sm mt-1">US institution rankings based on publications in AIS-related journals</p>
+        </div>
+        <nav class="flex gap-2 text-sm">
+          <a href="./index.html" class="px-3 py-1.5 rounded-lg bg-white/20 font-semibold">Institutions</a>
+          <a href="./authors.html" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">Authors</a>
+        </nav>
+      </div>
     </div>
   </header>
 
@@ -55,7 +63,7 @@
             </label>
             <label class="flex items-start gap-2 cursor-pointer group rounded-md px-1 py-0.5 hover:bg-gray-50">
               <input type="checkbox" class="journal-cb mt-0.5 rounded border-gray-300 text-rutgers focus:ring-rutgers" value="IJDAR" checked />
-              <span class="text-sm text-gray-800 leading-snug group-hover:text-rutgers">International Journal on Document Analysis and Recognition</span>
+              <span class="text-sm text-gray-800 leading-snug group-hover:text-rutgers">International Journal of Digital Accounting Research</span>
             </label>
             <label class="flex items-start gap-2 cursor-pointer group rounded-md px-1 py-0.5 hover:bg-gray-50">
               <input type="checkbox" class="journal-cb mt-0.5 rounded border-gray-300 text-rutgers focus:ring-rutgers" value="ISAFM" checked />
@@ -116,7 +124,7 @@
         </div>
       </div>
 
-      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Category Breakdown</h2>
+      <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Research theme breakdown (GPT)</h2>
       <div id="category-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 fade-in"></div>
 
       <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden fade-in">
@@ -126,6 +134,9 @@
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
+            <caption class="caption-top text-left text-xs text-gray-500 font-normal px-5 py-3 border-b border-gray-100">
+              Total counts every publication that matches your journal selection (US affiliations only). The next five columns are <strong class="font-medium text-gray-600">research themes</strong> (GPT), not separate journals. A dash means zero papers in that theme for this row.
+            </caption>
             <thead>
               <tr class="bg-rutgers text-white text-xs uppercase tracking-wider">
                 <th class="px-5 py-3.5 text-left font-semibold w-12">#</th>
@@ -155,7 +166,7 @@
 
   <footer class="border-t border-gray-100 mt-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-400 leading-relaxed">
-      Data sourced from <a href="https://openalex.org" target="_blank" class="underline hover:text-gray-600">OpenAlex</a> (works indexed in these journals, <span class="text-gray-500">since 1970</span>). Categories assigned via OpenAI.
+      Data sourced from <a href="https://openalex.org" target="_blank" class="underline hover:text-gray-600">OpenAlex</a> (works indexed in these journals, all years). Categories assigned via OpenAI.
     </div>
   </footer>
 
@@ -163,7 +174,7 @@
     const JOURNALS = [
       { id: 'AISEJ', label: 'AIS Educator Journal' },
       { id: 'IJAIS', label: 'International Journal of Accounting Information Systems' },
-      { id: 'IJDAR', label: 'International Journal on Document Analysis and Recognition' },
+      { id: 'IJDAR', label: 'International Journal of Digital Accounting Research' },
       { id: 'ISAFM', label: 'Intelligent Systems in Accounting, Finance and Management' },
       { id: 'JETA', label: 'Journal of Emerging Technologies in Accounting' },
       { id: 'JIS', label: 'Journal of Information Systems' },
@@ -225,6 +236,14 @@
     }
 
     function num(n) { return n.toLocaleString(); }
+
+    function parseDataJson(text, label) {
+      const s = text.trimStart();
+      if (s.startsWith('<')) {
+        throw new Error(label + ' returned HTML (missing file or wrong site path — use /repo-name/ on GitHub Pages).');
+      }
+      return JSON.parse(text);
+    }
 
     function getSelectedJournalSet() {
       const s = new Set();
@@ -442,13 +461,17 @@
     async function init() {
       try {
         const res = await fetch('./data/papers.json');
-        if (!res.ok) throw new Error('papers.json');
-        papers = await res.json();
+        const paperText = await res.text();
+        if (!res.ok) throw new Error('papers.json HTTP ' + res.status);
+        papers = parseDataJson(paperText, './data/papers.json');
         if (!Array.isArray(papers)) throw new Error('Invalid papers data');
 
         try {
           const cr = await fetch('./data/categorized.json');
-          if (cr.ok) categorized = await cr.json();
+          if (cr.ok) {
+            const catText = await cr.text();
+            categorized = parseDataJson(catText, './data/categorized.json');
+          }
         } catch (e) {
           categorized = {};
         }
