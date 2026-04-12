@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIS Author Rankings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rutgers: '#CC0033',
+            'rutgers-dark': '#A30029',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .journal-panel { box-shadow: 0 10px 40px -10px rgb(0 0 0 / 0.12); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <header class="bg-rutgers text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">AIS Author Rankings</h1>
+          <p class="text-red-200 text-sm mt-1">Counts per journal; primary affiliation from most recent paper (OpenAlex, all years)</p>
+        </div>
+        <nav class="flex gap-2 text-sm">
+          <a href="./index.html" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">Institutions</a>
+          <a href="./authors.html" class="px-3 py-1.5 rounded-lg bg-white/20 font-semibold">Authors</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="flex flex-wrap items-end gap-3 mb-8">
+      <div class="relative min-w-[220px] max-w-md flex-1">
+        <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Journals</span>
+        <button type="button" id="journal-toggle" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white shadow-sm text-left flex items-center justify-between gap-2 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-rutgers focus:border-transparent transition">
+          <span id="journal-toggle-label" class="text-gray-700 truncate">All journals</span>
+          <svg class="w-4 h-4 text-gray-400 shrink-0 transition-transform" id="journal-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="journal-panel" class="journal-panel hidden absolute z-20 mt-1 w-full min-w-[280px] max-h-72 overflow-y-auto rounded-lg border border-gray-200 bg-white p-3">
+          <p class="text-[11px] text-gray-400 mb-2 px-1">Leave all unchecked to include every journal.</p>
+          <div id="journal-checkboxes" class="space-y-2"></div>
+          <button type="button" id="journal-clear" class="mt-3 w-full text-xs font-medium text-rutgers py-1.5 rounded-md hover:bg-red-50 transition">Clear selection (all journals)</button>
+        </div>
+      </div>
+      <div class="min-w-[200px] max-w-md flex-1">
+        <label for="author-search" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Search author</label>
+        <input type="search" id="author-search" placeholder="Name contains…" autocomplete="off"
+          class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-rutgers focus:border-transparent transition" />
+      </div>
+      <div id="active-filter-tag" class="hidden">
+        <span class="inline-flex items-center gap-1 bg-red-50 text-rutgers text-xs font-medium px-3 py-2.5 rounded-lg border border-red-100">
+          <span id="filter-label"></span>
+        </span>
+      </div>
+    </div>
+
+    <div id="loading" class="flex items-center justify-center py-20 text-gray-400">
+      <svg class="animate-spin h-5 w-5 mr-3 text-rutgers" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+      <span>Loading author rankings…</span>
+    </div>
+
+    <div id="dashboard" class="hidden">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 fade-in">
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total Authors</p>
+          <p id="stat-total-authors" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Papers Considered</p>
+          <p id="stat-total-papers" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Top Author</p>
+          <p id="stat-top-author" class="text-lg font-bold text-gray-800 mt-1 leading-snug truncate">--</p>
+          <p id="stat-top-author-count" class="text-xs text-gray-400 mt-0.5">--</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">With affiliation</p>
+          <p id="stat-affil-count" class="text-3xl font-extrabold text-gray-800 mt-1">--</p>
+          <p id="stat-affil-pct" class="text-xs text-gray-400 mt-0.5">--</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden fade-in">
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="text-base font-semibold text-gray-800">Top 100 Authors</h2>
+          <span id="table-count" class="text-xs text-gray-400"></span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-rutgers text-white text-xs uppercase tracking-wider">
+                <th class="px-4 py-3.5 text-left font-semibold w-10"></th>
+                <th class="px-4 py-3.5 text-left font-semibold w-10">#</th>
+                <th class="px-4 py-3.5 text-left font-semibold">Author</th>
+                <th class="px-4 py-3.5 text-left font-semibold">Primary affiliation</th>
+                <th class="px-4 py-3.5 text-left font-semibold">Institutions</th>
+                <th class="px-4 py-3.5 text-right font-semibold w-16">Total</th>
+                <th class="px-4 py-3.5 text-right font-semibold w-16">AISEJ</th>
+                <th class="px-4 py-3.5 text-right font-semibold w-16">IJAIS</th>
+                <th class="px-4 py-3.5 text-right font-semibold w-16">IJDAR</th>
+                <th class="px-4 py-3.5 text-right font-semibold w-16">ISAFM</th>
+                <th class="px-4 py-3.5 text-right font-semibold w-16">JETA</th>
+                <th class="px-4 py-3.5 text-right font-semibold w-16">JIS</th>
+              </tr>
+            </thead>
+            <tbody id="authors-body" class="divide-y divide-gray-50"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="empty-state" class="hidden text-center py-20">
+      <p class="text-sm text-gray-400">Could not load <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">docs/data/authors_papers.json</code>. Run <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">npm run fetch-authors</code>, then copy <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">data/authors_papers.json</code> into <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">docs/data/</code> for GitHub Pages.</p>
+    </div>
+  </main>
+
+  <footer class="border-t border-gray-100 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-400">
+      Data sourced from <a href="https://openalex.org" target="_blank" class="underline hover:text-gray-600">OpenAlex</a> (all indexed years per journal).
+    </div>
+  </footer>
+
+  <script>
+    const JOURNAL_OPTIONS = [
+      { value: 'AISEJ', label: 'AIS Educator Journal' },
+      { value: 'IJAIS', label: 'International Journal of Accounting Information Systems' },
+      { value: 'IJDAR', label: 'International Journal of Digital Accounting Research' },
+      { value: 'ISAFM', label: 'Intelligent Systems in Accounting, Finance and Management' },
+      { value: 'JETA', label: 'Journal of Emerging Technologies in Accounting' },
+      { value: 'JIS', label: 'Journal of Information Systems' },
+    ];
+
+    const journalPanel = document.getElementById('journal-panel');
+    const journalToggle = document.getElementById('journal-toggle');
+    const journalToggleLabel = document.getElementById('journal-toggle-label');
+    const journalChevron = document.getElementById('journal-chevron');
+    const authorSearch = document.getElementById('author-search');
+    let journalPanelOpen = false;
+    const selectedJournals = new Set();
+
+    function num(n) { return n.toLocaleString(); }
+
+    function parseDataJson(text, label) {
+      const s = text.trimStart();
+      if (s.startsWith('<')) {
+        throw new Error(label + ' returned HTML (add docs/data/authors_papers.json or fix site base path).');
+      }
+      return JSON.parse(text);
+    }
+
+    function escapeHtml(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str).replace(/'/g, '&#39;');
+    }
+
+    function resolvePrimaryAffiliation(a) {
+      const p = a.primaryOrganization;
+      if (p != null && String(p).trim() !== '') return String(p).trim();
+      if (a.institutionCounts && a.institutionCounts.length > 0) {
+        const top = a.institutionCounts[0].institution;
+        if (top != null && String(top).trim() !== '') return String(top).trim();
+      }
+      return null;
+    }
+
+    const ALL_JOURNALS = JOURNAL_OPTIONS.map(j => j.value);
+    const COL_COUNT = 12;
+
+    let authorsPapersAll = [];
+    let authorRecentMeta = {};
+
+    function isPaperNewer(x, y) {
+      if (!y) return true;
+      const y1 = Number.isFinite(Number(x.publicationYear)) ? Number(x.publicationYear) : -9999;
+      const y2 = Number.isFinite(Number(y.publicationYear)) ? Number(y.publicationYear) : -9999;
+      if (y1 !== y2) return y1 > y2;
+      const d1 = x.publicationDate || '';
+      const d2 = y.publicationDate || '';
+      if (d1 !== d2) return d1 > d2;
+      return (x.paperId || '') > (y.paperId || '');
+    }
+
+    function buildAuthorRecentPrimary(rows) {
+      const meta = {};
+      for (const paper of rows) {
+        const seen = new Set();
+        for (const a of paper.authors || []) {
+          if (!a.authorId || seen.has(a.authorId)) continue;
+          seen.add(a.authorId);
+          const prev = meta[a.authorId];
+          if (!prev || isPaperNewer(paper, prev.paper)) {
+            const names = (a.institutions || []).map(i => i.displayName).filter(Boolean);
+            meta[a.authorId] = { paper, primaryOrganization: names[0] || null };
+          }
+        }
+      }
+      return meta;
+    }
+
+    function assignAuthorCompetitionRanks(sortedEntries) {
+      const rankById = new Map();
+      let currentRank = 1;
+      for (let i = 0; i < sortedEntries.length; i++) {
+        const [id, a] = sortedEntries[i];
+        if (i > 0 && a.paperCount < sortedEntries[i - 1][1].paperCount) {
+          currentRank = i + 1;
+        }
+        rankById.set(id, currentRank);
+      }
+      return rankById;
+    }
+
+    function computeAuthorsPayload(journalSet, authorQuery) {
+      const q = (authorQuery || '').trim().toLowerCase();
+      const journals = journalSet.size > 0 ? journalSet : null;
+
+      const filtered = authorsPapersAll.filter(p => {
+        if (journals && !journals.has(p.journal)) return false;
+        return true;
+      });
+
+      const authorCounts = {};
+      for (const paper of filtered) {
+        const seen = new Set();
+        for (const a of paper.authors || []) {
+          if (!a.authorId || seen.has(a.authorId)) continue;
+          seen.add(a.authorId);
+          if (!authorCounts[a.authorId]) {
+            authorCounts[a.authorId] = {
+              authorName: a.authorName,
+              orcid: a.orcid,
+              paperCount: 0,
+              journals: new Set(),
+              journalCounts: {},
+              institutionCounts: {},
+            };
+          }
+          const ac = authorCounts[a.authorId];
+          ac.paperCount += 1;
+          ac.journals.add(paper.journal);
+          ac.journalCounts[paper.journal] = (ac.journalCounts[paper.journal] || 0) + 1;
+          for (const inst of a.institutions || []) {
+            if (!inst.displayName) continue;
+            ac.institutionCounts[inst.displayName] = (ac.institutionCounts[inst.displayName] || 0) + 1;
+          }
+        }
+      }
+
+      const sorted = Object.entries(authorCounts).sort((a, b) => {
+        const d = b[1].paperCount - a[1].paperCount;
+        if (d !== 0) return d;
+        return String(a[1].authorName || '').localeCompare(String(b[1].authorName || ''));
+      });
+
+      const rankById = assignAuthorCompetitionRanks(sorted);
+
+      const nameMatches = ([, a]) =>
+        !q || String(a.authorName || '').toLowerCase().includes(q);
+
+      const forStats = q ? sorted.filter(nameMatches) : sorted;
+      const totalAuthors = forStats.length;
+      const authorsWithAffiliation = forStats.filter(([, a]) =>
+        Object.keys(a.institutionCounts).length > 0).length;
+
+      let tableEntries;
+      if (q) {
+        tableEntries = sorted.filter(nameMatches);
+      } else {
+        tableEntries = sorted.slice(0, 100);
+      }
+
+      const topAuthors = tableEntries.map(([id, a]) => {
+        const institutionCounts = Object.entries(a.institutionCounts)
+          .sort((x, y) => y[1] - x[1] || x[0].localeCompare(y[0]))
+          .map(([name, count]) => ({ institution: name, count }));
+        const recent = authorRecentMeta[id];
+        const fromRecent = recent?.primaryOrganization;
+        const fromFiltered = institutionCounts[0]?.institution || null;
+        const primaryOrganization =
+          (fromRecent && String(fromRecent).trim()) || (fromFiltered && String(fromFiltered).trim()) || null;
+        return {
+          rank: rankById.get(id),
+          authorId: id,
+          authorName: a.authorName,
+          paperCount: a.paperCount,
+          primaryOrganization,
+          orcid: a.orcid,
+          mostRecentYear: recent?.paper?.publicationYear ?? null,
+          mostRecentDate: recent?.paper?.publicationDate ?? null,
+          mostRecentJournal: recent?.paper?.journal ?? null,
+          journals: [...a.journals].sort(),
+          journalCounts: a.journalCounts,
+          institutionCounts,
+        };
+      });
+
+      return {
+        summary: {
+          totalAuthors,
+          authorsWithAffiliation,
+          totalPapersConsidered: filtered.length,
+        },
+        topAuthors,
+      };
+    }
+
+    function initJournalCheckboxes() {
+      const box = document.getElementById('journal-checkboxes');
+      box.innerHTML = JOURNAL_OPTIONS.map(j => `
+        <label class="flex items-start gap-2.5 px-1 py-1 rounded-md hover:bg-gray-50 cursor-pointer">
+          <input type="checkbox" class="journal-cb mt-0.5 rounded border-gray-300 text-rutgers focus:ring-rutgers" value="${j.value}" />
+          <span class="text-sm text-gray-700 leading-snug"><span class="font-semibold text-gray-800">${j.value}</span> — ${j.label}</span>
+        </label>
+      `).join('');
+      box.querySelectorAll('.journal-cb').forEach(cb => {
+        cb.addEventListener('change', () => {
+          if (cb.checked) selectedJournals.add(cb.value);
+          else selectedJournals.delete(cb.value);
+          updateJournalToggleLabel();
+          updateFilterTag();
+          loadAuthors();
+        });
+      });
+    }
+
+    function updateJournalToggleLabel() {
+      journalToggleLabel.textContent = selectedJournals.size === 0
+        ? 'All journals'
+        : [...selectedJournals].sort().join(', ');
+    }
+
+    function setJournalPanel(open) {
+      journalPanelOpen = open;
+      journalPanel.classList.toggle('hidden', !open);
+      journalChevron.style.transform = open ? 'rotate(180deg)' : '';
+    }
+
+    journalToggle.addEventListener('click', () => setJournalPanel(!journalPanelOpen));
+    document.getElementById('journal-clear').addEventListener('click', () => {
+      selectedJournals.clear();
+      document.querySelectorAll('.journal-cb').forEach(cb => { cb.checked = false; });
+      updateJournalToggleLabel();
+      updateFilterTag();
+      loadAuthors();
+    });
+    document.addEventListener('click', (e) => {
+      if (!journalPanelOpen) return;
+      if (journalToggle.contains(e.target) || journalPanel.contains(e.target)) return;
+      setJournalPanel(false);
+    });
+
+    function updateFilterTag() {
+      const parts = [];
+      if (selectedJournals.size > 0) parts.push([...selectedJournals].sort().join(', '));
+      const q = authorSearch.value.trim();
+      if (q) parts.push('Search: ' + q);
+      const tag = document.getElementById('active-filter-tag');
+      if (parts.length) {
+        document.getElementById('filter-label').textContent = parts.join(' · ');
+        tag.classList.remove('hidden');
+      } else {
+        tag.classList.add('hidden');
+      }
+    }
+
+    function renderSummary(data) {
+      const s = data.summary || {};
+      const topAuthors = data.topAuthors || [];
+      document.getElementById('stat-total-authors').textContent = num(s.totalAuthors ?? 0);
+      document.getElementById('stat-total-papers').textContent = num(s.totalPapersConsidered ?? 0);
+      if (topAuthors.length) {
+        const top = topAuthors[0];
+        document.getElementById('stat-top-author').textContent = top.authorName || '—';
+        document.getElementById('stat-top-author').title = top.authorName || '';
+        document.getElementById('stat-top-author-count').textContent = num(top.paperCount) + ' papers';
+      } else {
+        document.getElementById('stat-top-author').textContent = '—';
+        document.getElementById('stat-top-author-count').textContent = '';
+      }
+      const affil = s.authorsWithAffiliation ?? 0;
+      const totalAuthors = s.totalAuthors ?? 0;
+      document.getElementById('stat-affil-count').textContent = num(affil);
+      if (totalAuthors > 0) {
+        document.getElementById('stat-affil-pct').textContent =
+          ((affil / totalAuthors) * 100).toFixed(1) + '% of matching authors';
+      } else {
+        document.getElementById('stat-affil-pct').textContent = '';
+      }
+    }
+
+    function buildInstPreview(instCounts) {
+      if (!instCounts || !instCounts.length) return '<span class="text-gray-300 italic text-xs">None</span>';
+      const top2 = instCounts.slice(0, 2);
+      const rest = instCounts.length - 2;
+      let html = top2.map(ic =>
+        `<span class="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-[11px] font-medium px-2 py-0.5 rounded-full truncate max-w-[180px]" title="${escapeAttr(ic.institution)} (${ic.count})">${escapeHtml(ic.institution)} <span class="text-gray-400 font-bold">${ic.count}</span></span>`
+      ).join(' ');
+      if (rest > 0) html += ` <span class="text-[11px] text-gray-400 font-medium">+${rest} more</span>`;
+      return html;
+    }
+
+    function buildInstDetail(instCounts) {
+      if (!instCounts || !instCounts.length) return '<p class="text-xs text-gray-400 italic">No institution data</p>';
+      const maxC = instCounts[0].count;
+      return `<div class="grid gap-1.5" style="max-width:480px">${instCounts.map(ic => {
+        const w = Math.round((ic.count / maxC) * 100);
+        return `<div>
+          <div class="flex items-center justify-between text-xs mb-0.5">
+            <span class="text-gray-700 font-medium truncate mr-2" title="${escapeAttr(ic.institution)}">${escapeHtml(ic.institution)}</span>
+            <span class="text-rutgers font-bold whitespace-nowrap">${num(ic.count)}</span>
+          </div>
+          <div class="h-1 rounded-full bg-gray-100 overflow-hidden"><div class="h-full rounded-full bg-rutgers/50" style="width:${w}%"></div></div>
+        </div>`;
+      }).join('')}</div>`;
+    }
+
+    function renderAuthorsTable(authors) {
+      const tbody = document.getElementById('authors-body');
+      tbody.innerHTML = '';
+      const maxPapers = authors.length ? Math.max(1, Number(authors[0].paperCount) || 1) : 1;
+
+      for (const a of authors) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50/80 transition-colors cursor-pointer';
+        const barWidth = Math.round((a.paperCount / maxPapers) * 100);
+        const primaryResolved = resolvePrimaryAffiliation(a);
+        const orgText = primaryResolved
+          ? `<span class="block truncate max-w-[16rem]" title="${escapeAttr(primaryResolved)}">${escapeHtml(primaryResolved)}</span>`
+          : '<span class="text-gray-300 italic">Not available</span>';
+        const latestBits = [];
+        if (a.mostRecentJournal) latestBits.push(a.mostRecentJournal);
+        if (a.mostRecentYear != null) latestBits.push(String(a.mostRecentYear));
+        if (a.mostRecentDate) latestBits.push(a.mostRecentDate);
+        const latestLine = latestBits.length
+          ? `<div class="text-[11px] text-gray-400 mt-1 leading-snug">Latest paper: ${escapeHtml(latestBits.join(' · '))}</div>`
+          : '';
+        const jc = a.journalCounts || {};
+        const instList = Array.isArray(a.institutionCounts) ? a.institutionCounts : [];
+        const hasInsts = instList.length > 0;
+        const orcidLink = a.orcid
+          ? `<a href="${String(a.orcid).replace(/"/g, '&quot;')}" target="_blank" rel="noopener" class="text-green-600 hover:text-green-800 ml-1" title="ORCID" onclick="event.stopPropagation()"><svg class="w-3.5 h-3.5 inline" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 01-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-1.847-1.238-3.722-3.853-3.722h-2.466z"/></svg></a>`
+          : '';
+        const chevron = `<svg class="w-4 h-4 text-gray-400 transition-transform expand-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
+
+        tr.innerHTML = `
+          <td class="px-4 py-3.5 text-center w-10">${hasInsts ? chevron : ''}</td>
+          <td class="px-4 py-3.5 font-semibold text-gray-400 text-center w-10">${a.rank}</td>
+          <td class="px-4 py-3.5">
+            <div class="font-medium text-gray-800 leading-tight"><span class="align-middle">${escapeHtml(a.authorName)}</span>${orcidLink}</div>
+            <div class="mt-1.5 h-1 rounded-full bg-gray-100 overflow-hidden" style="max-width:140px">
+              <div class="h-full rounded-full bg-rutgers/70" style="width:${barWidth}%"></div>
+            </div>
+          </td>
+          <td class="px-4 py-3.5 text-sm text-gray-600">${orgText}${latestLine}</td>
+          <td class="px-4 py-3.5"><div class="flex flex-wrap gap-1 items-center">${buildInstPreview(instList)}</div></td>
+          <td class="px-4 py-3.5 text-right">
+            <span class="inline-flex items-center justify-center bg-red-50 text-rutgers font-bold text-xs rounded-full px-2.5 py-1 min-w-[36px]">${num(a.paperCount)}</span>
+          </td>
+          ${ALL_JOURNALS.map(j => {
+            const v = jc[j] || 0;
+            return `<td class="px-4 py-3.5 text-right tabular-nums ${v > 0 ? 'text-gray-700 font-medium' : 'text-gray-300'}">${v > 0 ? num(v) : '-'}</td>`;
+          }).join('')}
+        `;
+
+        const detailTr = document.createElement('tr');
+        detailTr.className = 'hidden';
+        detailTr.innerHTML = `<td colspan="${COL_COUNT}" class="px-6 py-4 bg-gray-50/70 border-b border-gray-100">
+          <div class="flex items-start gap-6">
+            <div class="flex-1">
+              <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">All Institutions for ${escapeHtml(a.authorName)}</p>
+              ${buildInstDetail(instList)}
+            </div>
+          </div>
+        </td>`;
+
+        tr.addEventListener('click', () => {
+          const isOpen = !detailTr.classList.contains('hidden');
+          detailTr.classList.toggle('hidden');
+          const chev = tr.querySelector('.expand-chevron');
+          if (chev) chev.style.transform = isOpen ? '' : 'rotate(180deg)';
+        });
+
+        tbody.appendChild(tr);
+        tbody.appendChild(detailTr);
+      }
+      document.getElementById('table-count').textContent = authors.length + ' authors';
+    }
+
+    let searchDebounce;
+
+    function loadAuthors() {
+      updateFilterTag();
+      const loading = document.getElementById('loading');
+      const dashboard = document.getElementById('dashboard');
+      const emptyState = document.getElementById('empty-state');
+
+      if (!authorsPapersAll.length) {
+        loading.classList.add('hidden');
+        dashboard.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const data = computeAuthorsPayload(selectedJournals, authorSearch.value);
+        loading.classList.add('hidden');
+        if (!data.topAuthors || !data.topAuthors.length) {
+          dashboard.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+          return;
+        }
+        emptyState.classList.add('hidden');
+        renderSummary(data);
+        renderAuthorsTable(data.topAuthors);
+        dashboard.classList.remove('hidden');
+      } catch (err) {
+        loading.innerHTML = `<span class="text-red-400">Error: ${escapeHtml(err.message)}</span>`;
+      }
+    }
+
+    authorSearch.addEventListener('input', () => {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(loadAuthors, 300);
+    });
+
+    async function bootstrap() {
+      const loading = document.getElementById('loading');
+      const emptyState = document.getElementById('empty-state');
+      try {
+        const res = await fetch('./data/authors_papers.json');
+        const raw = await res.text();
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        authorsPapersAll = parseDataJson(raw, './data/authors_papers.json');
+        if (!Array.isArray(authorsPapersAll)) throw new Error('Invalid data');
+        authorRecentMeta = buildAuthorRecentPrimary(authorsPapersAll);
+        initJournalCheckboxes();
+        updateJournalToggleLabel();
+        loadAuthors();
+      } catch (e) {
+        loading.classList.add('hidden');
+        loading.innerHTML = `<span class="text-red-400 text-sm">${escapeHtml(e.message)}</span>`;
+        emptyState.classList.remove('hidden');
+      }
+    }
+
+    bootstrap();
+  </script>
+</body>
+</html>

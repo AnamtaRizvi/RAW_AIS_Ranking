@@ -8,7 +8,7 @@ const OUT_FILE = path.join(DATA_DIR, 'papers.json');
 const JOURNALS = {
   AISEJ:  ['S4210208962'],
   IJAIS:  ['S38901890'],
-  IJDAR:  ['S90108747'],
+  IJDAR:  ['S148936004'],
   ISAFM:  ['S67471091', 'S4394735491'],
   JETA:   ['S116843975'],
   JIS:    ['S82262387'],
@@ -50,8 +50,8 @@ function sleep(ms) {
 async function fetchJournal(abbrev, sourceId) {
   let cursor = '*';
   const papers = [];
-  const filter = `primary_location.source.id:${sourceId},from_publication_date:1970-01-01`;
-  const select = 'id,title,abstract_inverted_index,authorships,publication_year';
+  const filter = `primary_location.source.id:${sourceId}`;
+  const select = 'id,title,abstract_inverted_index,authorships,publication_year,publication_date';
 
   console.log(`  Fetching source ${sourceId} ...`);
 
@@ -66,6 +66,7 @@ async function fetchJournal(abbrev, sourceId) {
         abstract: invertAbstract(work.abstract_inverted_index),
         journal: abbrev,
         publicationYear: work.publication_year,
+        publicationDate: work.publication_date || null,
         institutions: extractInstitutions(work.authorships),
       });
     }

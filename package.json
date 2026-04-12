@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "fetch": "node scripts/fetch_papers.js",
+    "fetch-authors": "node scripts/fetch_authors.js",
     "categorize": "node scripts/categorize_papers.js",
     "rank": "node scripts/compute_rankings.js",
     "start": "node server.js"
