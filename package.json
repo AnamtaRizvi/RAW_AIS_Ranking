@@ -8,7 +8,10 @@
     "fetch-authors": "node scripts/fetch_authors.js",
     "categorize": "node scripts/categorize_papers.js",
     "rank": "node scripts/compute_rankings.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "export-publishers": "node scripts/export_top_publishers_ijais_jis.js",
+    "export-rutgers": "node scripts/export_rutgers_papers.js",
+    "build-rutgers-page": "node scripts/build_rutgers_papers.js"
   },
   "dependencies": {
     "axios": "^1.7.0",

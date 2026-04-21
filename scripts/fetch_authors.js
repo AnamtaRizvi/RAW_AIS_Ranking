@@ -27,18 +27,33 @@ function extractAuthors(authorships) {
   for (const a of authorships || []) {
     const author = a.author || {};
     const id = author.id;
-    if (!id || seen.has(id)) continue;
-    seen.add(id);
-    authors.push({
-      authorId: id,
-      authorName: author.display_name || '',
-      orcid: author.orcid || null,
-      institutions: (a.institutions || []).map(inst => ({
-        id: inst.id,
-        displayName: inst.display_name || '',
-        countryCode: inst.country_code || '',
-      })),
-    });
+    const displayFromAuthor = (author.display_name || '').trim();
+    const rawName = (a.raw_author_name || '').trim();
+    const name = displayFromAuthor || rawName;
+
+    const institutions = (a.institutions || []).map(inst => ({
+      id: inst.id,
+      displayName: inst.display_name || '',
+      countryCode: inst.country_code || '',
+    }));
+
+    if (id) {
+      if (seen.has(id)) continue;
+      seen.add(id);
+      authors.push({
+        authorId: id,
+        authorName: displayFromAuthor || rawName || '',
+        orcid: author.orcid || null,
+        institutions,
+      });
+    } else if (name) {
+      authors.push({
+        authorId: null,
+        authorName: name,
+        orcid: null,
+        institutions,
+      });
+    }
   }
   return authors;
 }

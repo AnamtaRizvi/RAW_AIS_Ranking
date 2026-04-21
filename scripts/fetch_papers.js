@@ -51,7 +51,7 @@ async function fetchJournal(abbrev, sourceId) {
   let cursor = '*';
   const papers = [];
   const filter = `primary_location.source.id:${sourceId}`;
-  const select = 'id,title,abstract_inverted_index,authorships,publication_year,publication_date';
+  const select = 'id,title,doi,abstract_inverted_index,authorships,publication_year,publication_date,primary_location';
 
   console.log(`  Fetching source ${sourceId} ...`);
 
@@ -60,9 +60,18 @@ async function fetchJournal(abbrev, sourceId) {
     const { data } = await axios.get(url);
 
     for (const work of data.results) {
+      const pl = work.primary_location;
+      const landingPageUrl =
+        pl && typeof pl.landing_page_url === 'string' && pl.landing_page_url.trim()
+          ? pl.landing_page_url.trim()
+          : null;
+      const doiRaw = work.doi || null;
+
       papers.push({
         id: work.id,
         title: work.title || '',
+        doi: doiRaw,
+        landingPageUrl,
         abstract: invertAbstract(work.abstract_inverted_index),
         journal: abbrev,
         publicationYear: work.publication_year,
