@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Methodology — AIS Rankings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rutgers: '#CC0033',
+            'rutgers-dark': '#A30029',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <header class="bg-rutgers text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">Methodology</h1>
+          <p class="text-red-200 text-sm mt-1">How the AIS university rankings are constructed</p>
+        </div>
+        <nav class="flex gap-2 text-sm">
+          <a href="./index.html" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">Rankings</a>
+          <a href="./authors.html" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">Authors</a>
+          <a href="./methodology.html" class="px-3 py-1.5 rounded-lg bg-white/20 font-semibold">Methodology</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 md:p-8">
+      <h2 class="text-lg font-semibold text-gray-900">Methodology</h2>
+
+      <div class="mt-6 space-y-6 text-gray-700 leading-relaxed">
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Research Design</h3>
+          <p class="mt-2">This study uses a publication-based bibliometric approach to rank universities active in Accounting Information Systems (AIS) research. The goal is to measure institutional research productivity using article counts from a selected group of AIS-related journals. The approach is intended to be transparent, consistent, and easy to replicate because it relies on structured bibliographic data rather than manual collection.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Journal Selection</h3>
+          <p class="mt-2">The analysis focuses on six AIS-related journals: AIS Educator Journal (AISEJ), International Journal of Accounting Information Systems (IJAIS), International Journal of Digital Accounting Research (IJDAR), Intelligent Systems in Accounting, Finance and Management (ISAFM), Journal of Emerging Technologies in Accounting (JETA), and Journal of Information Systems (JIS). These journals define the publication set used in the ranking framework.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Data Source and Collection</h3>
+          <p class="mt-2">The dataset for this study is built using the OpenAlex API as the primary bibliographic source. Each journal is identified through its OpenAlex source ID, and article records are collected for analysis. For each paper, the extracted metadata includes the title, abstract, publication year, publication date, journal name, DOI, landing page URL, author information, and institutional affiliations. These data are then stored in a structured dataset for further analysis.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Unit of Analysis</h3>
+          <p class="mt-2">The primary unit of analysis is the individual published paper. Each article contributes to the institutional ranking through the affiliations listed in its authorship metadata. As a result, the analysis focuses on institutional presence in published research output rather than citation impact or author order.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Institutional Ranking Procedure</h3>
+          <p class="mt-2">Institutional rankings are generated using a publication-count method. For each article, all distinct U.S. institutions listed in the authorship affiliations are identified. Each institution receives one publication credit for that paper, regardless of how many co-authors from the same institution are included on the article. This prevents duplicate counting within a single paper while still giving credit to all institutions involved in collaborative research. The publication credits are then aggregated across the full dataset, and institutions are ranked in descending order based on their total publication counts. The top 50 institutions are retained for reporting.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Author-Level Dataset Construction</h3>
+          <p class="mt-2">In addition to the institutional dataset, a parallel author-level dataset is created to support author rankings and institution-specific views. This dataset preserves author names and affiliation information for each paper. Author affiliation is determined using the most recent paper available in the dataset. These records are also used to support focused views, such as the Rutgers-affiliated publication subset.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Research Category Classification</h3>
+          <p class="mt-2">To go beyond simply counting publications, each paper is also assigned to one of five research themes: Accounting and Financial AI, Business Intelligence and Decision Support, Information Systems and Applied Analytics, Engineering and Industrial AI, and Core AI and Data Science Methods. This classification is based on the paper’s title and abstract, which are used to identify the main research focus of the study. An OpenAI-based labeling process is then used to assign each paper to the most appropriate category. These labels are combined with the publication dataset so that the analysis can show not only how much an institution publishes, but also the areas in which its research is concentrated.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Basis for Publication Credit Assignment</h3>
+          <p class="mt-2">The counting logic used in this study is consistent with established accounting research ranking methods, where publication credit is assigned based on authorship and institutional affiliation within a selected set of journals. Prior accounting ranking systems similarly define a journal basket and allocate publication credit to the institutions represented by article authors. This study follows the same general principle, but adapts it specifically to the AIS domain using OpenAlex-based data collection and AI-assisted thematic classification.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Output Generation</h3>
+          <p class="mt-2">The final output of the methodology is a ranked list of universities based on total publication counts across the selected AIS journals. In addition to the overall ranking, the framework also supports category-wise analysis, author-level views, journal-specific filtering, and institution-specific subsets. This allows the system to provide both a broad measure of institutional research productivity and a more detailed view of research specialization within AIS.</p>
+        </section>
+
+        <section>
+          <h3 class="text-base font-semibold text-gray-900">Summary</h3>
+          <p class="mt-2">Overall, this methodology provides a structured and reproducible framework for evaluating AIS research productivity at the university level. By combining article retrieval, institution-level publication counting, author-level enrichment, and thematic classification, the study offers both an overall ranking mechanism and a deeper understanding of the research profile of institutions within the AIS field.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-gray-100 mt-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-gray-400 leading-relaxed">
+      Data sourced from <a href="https://openalex.org" target="_blank" class="underline hover:text-gray-600">OpenAlex</a> (works indexed in selected journals, all years). Categories assigned via OpenAI.
+    </div>
+  </footer>
+
+</body>
+</html>

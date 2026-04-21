@@ -276,6 +276,10 @@ app.get('/authors', (req, res) => {
   res.redirect(302, '/authors.html');
 });
 
+app.get('/rutgers-papers', (req, res) => {
+  res.redirect(302, '/rutgers-papers.html');
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.listen(PORT, () => {
